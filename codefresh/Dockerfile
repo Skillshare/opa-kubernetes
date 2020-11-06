@@ -3,7 +3,7 @@ FROM instrumenta/conftest:latest
 ENV ORAS_VERSION=0.8.1
 ENV TASK_VERSION=3.0.0
 
-RUN apk add -X http://dl-cdn.alpinelinux.org/alpine/edge/community curl py3-pip bats yq \
+RUN apk add -X http://dl-cdn.alpinelinux.org/alpine/edge/community curl py3-pip bats yq coreutils \
 	&& pip3 install awscli
 
 RUN curl --fail -sSL -o oras.tar.gz https://github.com/deislabs/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_amd64.tar.gz \
