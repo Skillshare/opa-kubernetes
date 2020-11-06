@@ -18,6 +18,7 @@ steps:
     type: build
     registry: utility
     working_directory: ${{clone}}
+    dockerfile: codefresh/dockerfile
     image_name: ${{CF_PIPELINE_NAME}}
     tag: ${{CF_REPO_NAME}}
     disable_push: true
