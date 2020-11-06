@@ -1,0 +1,1 @@
+FROM instrumenta/conftest:latest

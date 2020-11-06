@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source script/util.sh
+
+main() {
+	log::header "Validating Codefresh pipeline"
+
+	for file in "$@"; do
+		log::exec_command codefresh validate "${file}"
+	done
+}
+
+main "$@"

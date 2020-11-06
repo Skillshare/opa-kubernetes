@@ -1,0 +1,23 @@
+version: "1.0"
+fail_fast: true
+stages:
+  - prepare
+
+steps:
+  clone:
+    stage: prepare
+    title: Clone
+    type: git-clone
+    repo: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
+    revision: ${{CF_REVISION}}
+    git: github
+
+  build:
+    stage: prepare
+    title: Build step image
+    type: build
+    registry: utility
+    working_directory: ${{clone}}
+    image_name: ${{CF_PIPELINE_NAME}}
+    tag: ${{CF_REPO_NAME}}
+    disable_push: true
