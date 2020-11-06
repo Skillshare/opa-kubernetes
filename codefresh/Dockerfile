@@ -32,6 +32,7 @@ RUN conftest --version \
 	&& kubeval --version \
 	&& aws --version \
 	&& task --version \
-	&& kubectl version --client
+	&& kubectl version --client \
+	&& yq --version
 
 ENTRYPOINT [ ]

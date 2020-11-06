@@ -21,7 +21,7 @@ steps:
     working_directory: ${{clone}}
     dockerfile: codefresh/Dockerfile
     image_name: ${{CF_PIPELINE_NAME}}
-    tag: ${{CF_REPO_NAME}}
+    tag: ${{CF_REVISION}}
     disable_push: true
 
   test:
