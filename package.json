@@ -3,8 +3,8 @@
 	"version": "0.1.0",
 	"description": "Rego Kubernetes manifest policies",
 	"main": "index.js",
-	"repository": "https://github.com/ahawkins/opa-kubernetes",
-	"author": "adam@hawkins.io",
+	"repository": "https://github.com/skillshare/opa-kubernetes",
+	"author": "adam@skillshare.com",
 	"license": "MIT",
 	"private": false,
 	"devDependencies": {
