@@ -2,6 +2,7 @@ version: "1.0"
 fail_fast: true
 stages:
   - prepare
+  - test
 
 steps:
   clone:
@@ -22,3 +23,11 @@ steps:
     image_name: ${{CF_PIPELINE_NAME}}
     tag: ${{CF_REPO_NAME}}
     disable_push: true
+
+  test:
+    stage: test
+    title: Run tests
+    image: ${{build}}
+    working_directory: ${{clone}}
+    commands:
+      - task test:ci
