@@ -30,7 +30,7 @@ steps:
     image: ${{build}}
     working_directory: ${{clone}}
     commands:
-      - bats test/secret_test.bats
+      - task test:ci
     hooks:
       on_elected:
         exec:
