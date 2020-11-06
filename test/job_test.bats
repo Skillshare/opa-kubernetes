@@ -7,7 +7,7 @@ setup() {
 
 @test "JOB-01 - backoffLimit set" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq d -i "${fixture}/job.yml" 'spec.backoffLimit'
 

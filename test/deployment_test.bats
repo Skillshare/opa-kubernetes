@@ -7,7 +7,7 @@ setup() {
 
 @test "DPL-01 - containers set liveness probes" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe'
 
@@ -19,7 +19,7 @@ setup() {
 
 @test "DPL-01 - containers set readiness probes" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe'
 
@@ -31,7 +31,7 @@ setup() {
 
 @test "DPL-02 - selector matches template labels" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/deployment.yml" 'spec.selector.matchLabels.extra' junk
 
@@ -43,7 +43,7 @@ setup() {
 
 @test "DPL-02 - empty label selector" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq d -i "${fixture}/deployment.yml" 'spec.selector.matchLabels.app'
 
@@ -55,7 +55,7 @@ setup() {
 
 @test "DPL-02 - template labels missing" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq d -i "${fixture}/deployment.yml" 'spec.template.metadata.labels'
 
@@ -67,7 +67,7 @@ setup() {
 
 @test "DPL-03 - containers mismatched HTTP liveness probe port" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe.httpGet.port' 9999
 
@@ -81,7 +81,7 @@ setup() {
 
 @test "DPL-03 - containers mismatched TCP liveness probe port" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe.tcpSocket.port' 9999
 	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe.httpGet' 9999
@@ -94,7 +94,7 @@ setup() {
 
 @test "DPL-03 - containers mismatched HTTP readiness probe port" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe.httpGet.port' 9999
 
@@ -108,7 +108,7 @@ setup() {
 
 @test "DPL-03 - containers mismatched TCP readiness probe port" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe.tcpSocket.port' 9999
 	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe.httpGet' 9999
