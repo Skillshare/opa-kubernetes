@@ -31,3 +31,9 @@ steps:
     working_directory: ${{clone}}
     commands:
       - task test:ci
+    hooks:
+      on_elected:
+        exec:
+          image: codefresh/kubectl
+          commands:
+            - kubectl config use-context skillshare-utility
