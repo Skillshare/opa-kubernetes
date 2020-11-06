@@ -4,6 +4,14 @@ stages:
   - prepare
   - test
 
+hooks:
+  on_elected:
+    fail_fast: true
+    steps:
+      set_kube_context:
+        image: codefresh/kubectl
+        commands:
+          - kubectl config use-context skillshare-utility
 steps:
   clone:
     stage: prepare
@@ -31,9 +39,3 @@ steps:
     working_directory: ${{clone}}
     commands:
       - task test:ci
-    hooks:
-      on_elected:
-        exec:
-          image: codefresh/kubectl
-          commands:
-            - kubectl config use-context skillshare-utility
