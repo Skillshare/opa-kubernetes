@@ -44,7 +44,8 @@ steps:
   push:
     stage: release
     title: Push
+    type: push
     candidate: ${{build}}
-    registery: utility
+    registry: utility
     image_name: conftest/kubernetes
     tag: latest
