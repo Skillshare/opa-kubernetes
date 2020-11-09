@@ -42,8 +42,12 @@ deny[msg] {
 	kubernetes.is_deployment
 	container := input.spec.template.spec.containers[_]
 	probes := container_probes with input as container
+
 	probe_ports := {port | port := probes[_].port}
-	container_ports := {port | port := container.ports[_].containerPort}
+	container_port_numbers := {port | port := container.ports[_].containerPort}
+	container_port_names := {port | port := container.ports[_].name}
+
+	container_ports := union({container_port_numbers, container_port_names})
 
 	count(probe_ports - container_ports) != 0
 	msg = sprintf("[DPL-03] Deployment %s container %s probes port must match container port", [name, container.name])
