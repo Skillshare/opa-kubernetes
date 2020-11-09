@@ -36,7 +36,7 @@ steps:
   test:
     stage: test
     title: Run tests
-    image: foo
+    image: ${{build}}
     working_directory: ${{clone}}
     commands:
       - task test:ci
