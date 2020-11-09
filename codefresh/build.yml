@@ -3,6 +3,7 @@ fail_fast: true
 stages:
   - prepare
   - test
+  - release
 
 hooks:
   on_elected:
@@ -28,14 +29,22 @@ steps:
     registry: utility
     working_directory: ${{clone}}
     dockerfile: codefresh/Dockerfile
-    image_name: ${{CF_PIPELINE_NAME}}
+    image_name: conftest/kubernetes
     tag: ${{CF_REVISION}}
     disable_push: true
 
   test:
     stage: test
     title: Run tests
-    image: ${{build}}
+    image: foo
     working_directory: ${{clone}}
     commands:
       - task test:ci
+
+  push:
+    stage: release
+    title: Push
+    candidate: ${{build}}
+    registery: utility
+    image_name: conftest/kubernetes
+    tag: latest
