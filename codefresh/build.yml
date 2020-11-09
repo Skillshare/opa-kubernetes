@@ -28,7 +28,6 @@ steps:
     type: build
     registry: utility
     working_directory: ${{clone}}
-    dockerfile: codefresh/Dockerfile
     image_name: conftest/kubernetes
     tag: ${{CF_REVISION}}
     disable_push: true

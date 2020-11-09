@@ -1,0 +1,76 @@
+version: "1.0"
+fail_fast: true
+stages:
+  - prepare
+  - test
+
+steps:
+  clone:
+    stage: prepare
+    title: Clone
+    type: git-clone
+    repo: ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}
+    revision: ${{CF_REVISION}}
+    git: github
+
+  detect_chart:
+    stage: prepare
+    title: Check
+    image: alpine:3.10
+    working_directory: ${{clone}}
+    commands:
+      - test -d chart/Chart.yaml
+      - test -f deploy/test/values.yaml
+
+  test_sandbox_release:
+    stage: test
+    title: Check sandbox release
+    working_directory: ${{clone}}
+    image: 289698421666.dkr.ecr.us-east-1.amazonaws.com/conftest/kubernetes:latest
+    commands:
+      - check-release sandbox
+    when:
+      steps:
+        - name: detect_chart
+          on:
+            - success
+
+  test_staging_release:
+    stage: test
+    title: Check staging release
+    working_directory: ${{clone}}
+    image: 289698421666.dkr.ecr.us-east-1.amazonaws.com/conftest/kubernetes:latest
+    commands:
+      - check-release staging
+    when:
+      steps:
+        - name: detect_chart
+          on:
+            - success
+
+  test_prod_release:
+    stage: test
+    title: Check prod release
+    working_directory: ${{clone}}
+    image: 289698421666.dkr.ecr.us-east-1.amazonaws.com/conftest/kubernetes:latest
+    commands:
+      - check-release prod
+    when:
+      steps:
+        - name: detect_chart
+          on:
+            - success
+
+  test_chart_values_schema:
+    stage: test
+    title: Check values JSON schema
+    image: 289698421666.dkr.ecr.us-east-1.amazonaws.com/codefresh/shell
+    working_directory: ${{clone}}
+    commands:
+      - test -f chart/values.schema.json
+      - jq -re . chart/values.schema.json
+    when:
+      steps:
+        - name: detect_chart
+          on:
+            - success

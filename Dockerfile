@@ -3,6 +3,8 @@ FROM instrumenta/conftest:latest
 ENV ORAS_VERSION=0.8.1
 ENV TASK_VERSION=3.0.0
 
+ENV POLICY_PATH=/usr/src/opa-kubernetes
+
 RUN apk add -X http://dl-cdn.alpinelinux.org/alpine/edge/community curl py3-pip bats yq rsync \
 	&& pip3 install awscli
 
@@ -34,5 +36,8 @@ RUN conftest --version \
 	&& task --version \
 	&& kubectl version --client \
 	&& yq --version
+
+COPY policy/ $POLICY_PATH
+COPY bin/check-release /usr/local/bin
 
 ENTRYPOINT [ ]
