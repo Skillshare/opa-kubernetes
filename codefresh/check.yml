@@ -15,7 +15,7 @@ steps:
 
   detect_chart:
     stage: prepare
-    title: Check
+    title: Detect chart
     image: alpine:3.10
     working_directory: ${{clone}}
     commands:
