@@ -19,7 +19,7 @@ steps:
     image: alpine:3.10
     working_directory: ${{clone}}
     commands:
-      - test -d chart/Chart.yaml
+      - test -f chart/Chart.yaml
       - test -f deploy/test/values.yaml
 
   test_sandbox_release:
