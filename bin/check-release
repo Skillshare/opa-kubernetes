@@ -133,7 +133,7 @@ main() {
 	fi
 
 	log::indicator "Checking basic policies"
-	log::exec_command conftest test -p "${POLICY_PATH}/policy" "${manifests[@]}"
+	log::exec_command conftest test -p "${POLICY_PATH}" "${manifests[@]}"
 
 	popd >/dev/null
 }

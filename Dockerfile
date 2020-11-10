@@ -47,7 +47,7 @@ RUN conftest --version \
 	&& yq --version \
 	&& helm version --client
 
-COPY policy/ $POLICY_PATH
+COPY policy $POLICY_PATH
 COPY bin/check-release /usr/local/bin
 
 ENTRYPOINT [ ]
