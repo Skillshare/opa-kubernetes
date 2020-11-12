@@ -38,6 +38,7 @@ RUN kubeval --version \
 	&& yq --version
 
 COPY policy $POLICY_PATH
-COPY bin/check-release bin/sk-sops /usr/local/bin
+COPY bin/check-release /usr/local/bin
+COPY bin/sk-sops /usr/local/bin
 
 ENTRYPOINT [ ]
