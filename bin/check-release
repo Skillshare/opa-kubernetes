@@ -52,7 +52,7 @@ log::exec_command() {
 }
 
 main() {
-	local scratch scratch_dir environment="${1:-}" policy_path="${POLICY_PATH:-}"
+	local environment="${1:-}" policy_path="${POLICY_PATH:-}"
 
 	if [ -z "${environment}" ]; then
 		log::error "USAGE: ${0} ENVIRONMENT [POLICY_PATH]"
@@ -83,14 +83,9 @@ main() {
 	fi
 
 	local -a helm_args=()
-	local -a manifests=()
 
-	scratch_dir="$(mktemp -d)"
-	scratch="$(mktemp)"
-
-	helm_args=(helm secrets template chart)
+	helm_args=(helm secrets conftest chart)
 	helm_args+=(--generate-name)
-	helm_args+=(--output-dir "${scratch_dir}")
 	helm_args+=(-f deploy/test/values.yaml)
 
 	if [ -f "deploy/${environment}/values.yaml" ]; then
@@ -113,29 +108,8 @@ main() {
 		fi
 	fi
 
-	log::indicator "Generating ${environment} release"
-	log::exec_command "${helm_args[@]}"
-
-	# XXX: go into the generated templates directory so file names
-	# are relative.
-	pushd "${scratch_dir}"/*/templates >/dev/null
-
-	log::indicator "Finding mainifests"
-	log::exec_command find . -type f \( -iname '*.yml' -o -iname '*.yaml' \) | tee "${scratch}"
-
-	while read -r manifest; do
-		manifests+=("${manifest}")
-	done <"${scratch}"
-
-	if [ "${#manifests}" -eq 0 ]; then
-		log::error "No manifests found"
-		return 1
-	fi
-
 	log::indicator "Checking basic policies"
-	log::exec_command conftest test -p "${POLICY_PATH}" "${manifests[@]}"
-
-	popd >/dev/null
+	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}"
 }
 
 main "$@"
