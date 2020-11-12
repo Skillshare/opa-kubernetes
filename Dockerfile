@@ -29,6 +29,7 @@ RUN curl --fail -sSL -o /usr/local/bin/kubectl https://storage.googleapis.com/ku
 	&& chmod +x /usr/local/bin/kubectl
 
 RUN helm plugin install https://github.com/jkroepke/helm-secrets
+RUN helm plugin install https://github.com/skillshare/helm-secrets-sops-driver
 RUN helm plugin install https://github.com/skillshare/helm-conftest
 
 RUN kubeval --version \
@@ -39,6 +40,5 @@ RUN kubeval --version \
 
 COPY policy $POLICY_PATH
 COPY bin/check-release /usr/local/bin
-COPY bin/sk-sops /usr/local/bin
 
 ENTRYPOINT [ ]

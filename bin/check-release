@@ -84,7 +84,7 @@ main() {
 
 	local -a helm_args=()
 
-	helm_args=(helm secrets conftest chart)
+	helm_args=(helm secrets-sops-driver secrets conftest chart)
 	helm_args+=(--generate-name)
 	helm_args+=(-f deploy/test/values.yaml)
 
@@ -95,8 +95,6 @@ main() {
 	if [ -f "deploy/${environment}/secrets.yaml" ]; then
 		helm_args+=(-f "deploy/${environment}/secrets.yaml")
 	fi
-
-	export SECRET_DRIVER=sk-sops
 
 	log::indicator "Checking basic policies"
 	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}"
