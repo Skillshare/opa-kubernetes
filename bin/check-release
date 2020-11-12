@@ -93,20 +93,10 @@ main() {
 	fi
 
 	if [ -f "deploy/${environment}/secrets.yaml" ]; then
-		# XXX: see skillshare/codefresh rep for background on this workaround
-		if [ "${SOPS_SKIP_KMS_ASSUME_ROLE:-}" = "1" ]; then
-			local shimmed_dir
-			shimmed_dir="$(mktemp -d)"
-
-			shimmed_file="${shimmed_dir}/secrets.yaml"
-
-			grep -vF 'role: arn:aws:iam::' "deploy/${environment}/secrets.yaml" >"${shimmed_file}"
-
-			helm_args+=(-f "${shimmed_file}")
-		else
-			helm_args+=(-f "deploy/${environment}/secrets.yaml")
-		fi
+		helm_args+=(-f "deploy/${environment}/secrets.yaml")
 	fi
+
+	export DRIVER=sk-sops
 
 	log::indicator "Checking basic policies"
 	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}"
