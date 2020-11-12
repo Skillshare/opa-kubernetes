@@ -1,6 +1,7 @@
 FROM alpine/helm:3.4.0
 
 ENV TASK_VERSION=3.0.0
+ENV CONFTEST_VERSION=0.21.0
 
 ENV POLICY_PATH=/usr/src/opa-kubernetes
 
@@ -11,6 +12,12 @@ RUN curl --fail -sSL -o task.tar.gz https://github.com/go-task/task/releases/dow
 	&& tar -zxf task.tar.gz -C task-install \
 	&& mv task-install/task /usr/local/bin \
 	&& rm -rf task.tar.gz task-install
+
+RUN curl --fail -sSL -o conftest.tar.gz https://github.com/open-policy-agent/conftest/releases/download/v${CONFTEST_VERSION}/conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz \
+	&& mkdir -p conftest-install \
+	&& tar -zxf conftest.tar.gz -C conftest-install \
+	&& mv conftest-install/conftest /usr/local/bin \
+	&& rm -rf conftest.tar.gz conftest-install
 
 RUN curl --fail -sSL -o kubeval.tar.gz https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz \
 	&& mkdir -p kubeval-install \
@@ -25,8 +32,9 @@ RUN helm plugin install https://github.com/jkroepke/helm-secrets
 RUN helm plugin install https://github.com/skillshare/helm-conftest
 
 RUN kubeval --version \
-	&& task --version \
 	&& kubectl version --client \
+	&& task --version \
+	&& conftest --version \
 	&& yq --version
 
 COPY policy $POLICY_PATH
