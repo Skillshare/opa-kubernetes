@@ -96,7 +96,7 @@ main() {
 		helm_args+=(-f "deploy/${environment}/secrets.yaml")
 	fi
 
-	export DRIVER=sk-sops
+	export SECRET_DRIVER=sk-sops
 
 	log::indicator "Checking basic policies"
 	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}"
