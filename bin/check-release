@@ -96,6 +96,8 @@ main() {
 		helm_args+=(-f "deploy/${environment}/secrets.yaml")
 	fi
 
+	export HELM_SECRETS_QUIET=true
+
 	log::indicator "Checking basic policies"
 	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}"
 }
