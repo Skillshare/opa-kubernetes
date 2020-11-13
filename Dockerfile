@@ -28,7 +28,7 @@ RUN curl --fail -sSL -o kubeval.tar.gz https://github.com/instrumenta/kubeval/re
 RUN curl --fail -sSL -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl \
 	&& chmod +x /usr/local/bin/kubectl
 
-RUN helm plugin install https://github.com/jkroepke/helm-secrets
+RUN helm plugin install https://github.com/jkroepke/helm-secrets --version 0.3.0
 RUN helm plugin install https://github.com/skillshare/helm-secrets-sops-driver
 RUN helm plugin install https://github.com/skillshare/helm-conftest
 
