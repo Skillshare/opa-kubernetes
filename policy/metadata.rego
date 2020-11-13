@@ -29,3 +29,8 @@ deny[msg] {
 	not required_labels with input as template
 	msg = sprintf("[MTA-02] %s template must include Kubernetes recommended labels: https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/#labels", [name])
 }
+
+deny[msg] {
+	count(name) > 63
+	msg = sprintf("[MTA-03] %s name is more than 63 characters", [name])
+}

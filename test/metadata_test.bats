@@ -29,3 +29,17 @@ setup() {
 
 	echo "${output[@]}" | grep -qF 'MTA-02'
 }
+
+@test "MTA-03 - name" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/deployment.yml" \
+		'metadata.name' \
+		"$(head -c 100 /dev/zero | tr '\0' 'X')"
+
+	run conftest test "${fixture}/"*
+	[ $status -ne 0 ]
+
+	echo "${output[@]}" | grep -qF 'MTA-03'
+}
