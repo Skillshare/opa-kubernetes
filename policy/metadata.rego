@@ -34,3 +34,8 @@ deny[msg] {
 	count(name) > 63
 	msg = sprintf("[MTA-03] %s name is more than 63 characters", [name])
 }
+
+deny[msg] {
+	not regex.match("^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$", name)
+	msg = sprintf("[MTA-03] %s name must only contain: A-Z, a-z, -, _, and . characters.", [name])
+}
