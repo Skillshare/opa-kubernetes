@@ -1,16 +1,6 @@
 package combined
 
-entities[e] {
-	entity := input[_]
-	is_object(entity)
-	e := entity
-}
-
-entities[e] {
-	list := input[_]
-	is_array(list)
-	e := list[_]
-}
+entities := {e | e := input[_].contents}
 
 services_by_name := {metadata.name: entity |
 	e := entities[_]
