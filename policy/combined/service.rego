@@ -24,7 +24,9 @@ deny[msg] {
 
 matching_service_port(service, deployments) {
 	target_ports := {port | port := service.spec.ports[_].targetPort}
-	container_ports := {port | port := deployments[_].spec.template.spec.containers[_].ports[_].containerPort}
+	numbered_container_ports := {port | port := deployments[_].spec.template.spec.containers[_].ports[_].containerPort}
+	named_container_ports := {port | port := deployments[_].spec.template.spec.containers[_].ports[_].name}
+	container_ports := union({numbered_container_ports, named_container_ports})
 	count(target_ports - container_ports) == 0
 }
 

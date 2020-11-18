@@ -162,11 +162,44 @@ setup() {
 	echo "${output[@]}" | grep -qF 'CMB-04'
 }
 
-@test "CMB-05 - Service port matches container port" {
+@test "CMB-05 - Service port matches numbered container port" {
 	fixture="$(mktemp -d)"
 	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' 9999
+
+	run conftest test \
+		--combine --namespace combined \
+		"${fixture}/"*
+	[ $status -ne 0 ]
+
+	echo "${output[@]}" | grep -qF 'CMB-05'
+}
+
+@test "CMB-05 - Service port matches named container port" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' http
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' http
+
+	run conftest test \
+		--combine --namespace combined \
+		"${fixture}/"*
+	[ $status -eq 0 ]
+
+	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' http
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' junk
+
+	run conftest test \
+		--combine --namespace combined \
+		"${fixture}/"*
+	[ $status -ne 0 ]
+
+	echo "${output[@]}" | grep -qF 'CMB-05'
+
+	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' junk
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' http
 
 	run conftest test \
 		--combine --namespace combined \
