@@ -8,7 +8,7 @@ setup() {
 
 @test "CMB-01 - Deployment container ConfigMap" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i -s \
 		test/script/insert_invalid_configmap_reference.yml \
@@ -24,7 +24,7 @@ setup() {
 
 @test "CMB-01 - Deployment container Secret" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i -s \
 		test/script/insert_invalid_secret_reference.yml \
@@ -40,7 +40,7 @@ setup() {
 
 @test "CMB-01 - Job container ConfigMap" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i -s \
 		test/script/insert_invalid_configmap_reference.yml \
@@ -56,7 +56,7 @@ setup() {
 
 @test "CMB-01 - Job container envFrom Secret" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i -s \
 		test/script/insert_invalid_secret_reference.yml \
@@ -72,7 +72,7 @@ setup() {
 
 @test "CMB-02 - Deployment volume from ConfigMap" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i -s \
 		test/script/insert_invalid_configmap_volume.yml \
@@ -88,7 +88,7 @@ setup() {
 
 @test "CMB-02 - Deployment volume from Secret" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i -s \
 		test/script/insert_invalid_secret_volume.yml \
@@ -104,7 +104,7 @@ setup() {
 
 @test "CMB-02 - Job volume from ConfigMap" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i -s \
 		test/script/insert_invalid_configmap_volume.yml \
@@ -120,7 +120,7 @@ setup() {
 
 @test "CMB-02 - Job volume from Secret" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i -s \
 		test/script/insert_invalid_secret_volume.yml \
@@ -136,7 +136,7 @@ setup() {
 
 @test "CMB-03 - Service selector matches Deployment labels" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/service.yml" 'spec.selector.app' junk
 
@@ -150,7 +150,7 @@ setup() {
 
 @test "CMB-04 - HPA scale target matches Deployment" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/horizontal_pod_autoscaler.yml" 'spec.scaleTargetRef.name' junk
 
@@ -162,9 +162,9 @@ setup() {
 	echo "${output[@]}" | grep -qF 'CMB-04'
 }
 
-@test "CMB-05 - Service port matches container port" {
+@test "CMB-05 - Service port matches numbered container port" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' 9999
 
@@ -176,9 +176,42 @@ setup() {
 	echo "${output[@]}" | grep -qF 'CMB-05'
 }
 
+@test "CMB-05 - Service port matches named container port" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' http
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' http
+
+	run conftest test \
+		--combine --namespace combined \
+		"${fixture}/"*
+	[ $status -eq 0 ]
+
+	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' http
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' junk
+
+	run conftest test \
+		--combine --namespace combined \
+		"${fixture}/"*
+	[ $status -ne 0 ]
+
+	echo "${output[@]}" | grep -qF 'CMB-05'
+
+	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' junk
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' http
+
+	run conftest test \
+		--combine --namespace combined \
+		"${fixture}/"*
+	[ $status -ne 0 ]
+
+	echo "${output[@]}" | grep -qF 'CMB-05'
+}
+
 @test "CMB-06 - HPA Deployment replicas" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/deployment.yml" 'spec.replicas' 3
 

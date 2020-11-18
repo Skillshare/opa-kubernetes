@@ -7,7 +7,7 @@ setup() {
 
 @test "HPA-01 - HPA replica sanity" {
 	fixture="$(mktemp -d)"
-	cp -r test/fixtures/pass/ "${fixture}"
+	rsync -r test/fixtures/pass/ "${fixture}"
 
 	yq w -i "${fixture}/horizontal_pod_autoscaler.yml" 'spec.minReplicas' 10
 	yq w -i "${fixture}/horizontal_pod_autoscaler.yml" 'spec.maxReplicas' 1

@@ -12,3 +12,9 @@ tasks:
   test:acceptance:
     cmds:
       - bats test/*_test.bats
+
+  test:ci:
+    cmds:
+      - task: test:kubeval
+      - task: test:kubectl
+      - task: test:acceptance
