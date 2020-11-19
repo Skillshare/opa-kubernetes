@@ -100,6 +100,9 @@ main() {
 
 	log::indicator "Checking basic policies"
 	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}"
+
+	log::indicator "Checking combined policies"
+	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}" --policy-namespace combined
 }
 
 main "$@"
