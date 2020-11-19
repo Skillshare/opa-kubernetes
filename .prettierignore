@@ -1,3 +1,4 @@
 *.rego
 *.bats
 yarn.lock
+vendor
