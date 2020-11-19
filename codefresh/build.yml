@@ -29,7 +29,7 @@ steps:
     # This includes git
     image: codefresh/cli
     commands:
-      - git submodule update --recursive
+      - git submodule update --init --recursive
 
   build:
     stage: prepare
