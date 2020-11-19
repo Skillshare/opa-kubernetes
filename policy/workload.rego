@@ -55,3 +55,11 @@ deny[msg] {
 	not volume_mounts[volume]
 	msg = sprintf("[WRK-03] %s %s must mount volume %s in a container", [input.kind, name, volume])
 }
+
+deny[msg] {
+	kubernetes.is_workload
+	template := kubernetes.workload_template(input)
+	container := template.spec.containers[_]
+	regex.match(`[A-Z()${}\[\]]`, container.image)
+	msg = sprintf("[WRK-04] %s %s container %s image contains invalid characters", [input.kind, name, container.name])
+}

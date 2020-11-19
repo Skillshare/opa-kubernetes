@@ -185,3 +185,36 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_success
 }
+
+@test "WRK-04 - Deployment containers invalid image" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].image' 'FOO'
+
+	run conftest test "${fixture}/"*
+	assert_failure
+	assert_denied 'WRK-04'
+}
+
+@test "WRK-04 - Job containers invalid image" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/job.yml" 'spec.template.spec.containers[0].image' 'FOO'
+
+	run conftest test "${fixture}/"*
+	assert_failure
+	assert_denied 'WRK-04'
+}
+
+@test "WRK-04 - CronJob containers invalid image" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.spec.containers[0].image' 'FOO'
+
+	run conftest test "${fixture}/"*
+	assert_failure
+	assert_denied 'WRK-04'
+}
