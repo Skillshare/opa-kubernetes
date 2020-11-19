@@ -17,7 +17,7 @@
 	},
 	"lint-staged": {
 		"*.rego": "opa fmt -w",
-		"codefresh/*.yml": "script/lint-codefresh",
+		"codefresh/*.yml": "codefresh validate",
 		"*": [
 			"script/lint-shellcheck",
 			"script/lint-editorconfig",
