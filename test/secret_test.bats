@@ -1,8 +1,11 @@
 #!/usr/bin/env basts
 
+load vendor/bats-support/load
+load vendor/bats-assert/load
+
 setup() {
 	run conftest test test/fixtures/pass/secret.yml
-	[ $status -eq 0 ]
+	assert_success
 }
 
 @test "SEC-01 - Valid Base64 values" {
@@ -13,7 +16,7 @@ setup() {
 	yq w -i "${fixture}/secret.yml" 'data.FOO' '@#*$&@#$&#@'
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'SEC-01'
+	assert_output --partial 'SEC-01'
 }

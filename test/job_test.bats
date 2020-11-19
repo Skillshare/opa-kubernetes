@@ -1,8 +1,11 @@
 #!/usr/bin/env basts
 
+load vendor/bats-support/load
+load vendor/bats-assert/load
+
 setup() {
 	run conftest test test/fixtures/pass/job.yml
-	[ $status -eq 0 ]
+	assert_success
 }
 
 @test "JOB-01 - backoffLimit set" {
@@ -12,7 +15,7 @@ setup() {
 	yq d -i "${fixture}/job.yml" 'spec.backoffLimit'
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'JOB-01'
+	assert_output --partial 'JOB-01'
 }

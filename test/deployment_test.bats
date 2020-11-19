@@ -1,8 +1,11 @@
 #!/usr/bin/env basts
 
+load vendor/bats-support/load
+load vendor/bats-assert/load
+
 setup() {
 	run conftest test test/fixtures/pass/deployment.yml
-	[ $status -eq 0 ]
+	assert_success
 }
 
 @test "DPL-01 - containers set liveness probes" {
@@ -12,9 +15,9 @@ setup() {
 	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe'
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-01'
+	assert_output --partial 'DPL-01'
 }
 
 @test "DPL-01 - containers set readiness probes" {
@@ -24,9 +27,9 @@ setup() {
 	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe'
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-01'
+	assert_output --partial 'DPL-01'
 }
 
 @test "DPL-02 - selector matches template labels" {
@@ -36,9 +39,9 @@ setup() {
 	yq w -i "${fixture}/deployment.yml" 'spec.selector.matchLabels.extra' junk
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-02'
+	assert_output --partial 'DPL-02'
 }
 
 @test "DPL-02 - empty label selector" {
@@ -48,9 +51,9 @@ setup() {
 	yq d -i "${fixture}/deployment.yml" 'spec.selector.matchLabels.app'
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-02'
+	assert_output --partial 'DPL-02'
 }
 
 @test "DPL-02 - template labels missing" {
@@ -60,9 +63,9 @@ setup() {
 	yq d -i "${fixture}/deployment.yml" 'spec.template.metadata.labels'
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-02'
+	assert_output --partial 'DPL-02'
 }
 
 @test "DPL-03 - containers mismatched HTTP liveness probe port number" {
@@ -74,9 +77,9 @@ setup() {
 	cat "${fixture}/deployment.yml"
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-03'
+	assert_output --partial 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched HTTP liveness probe port name" {
@@ -87,14 +90,14 @@ setup() {
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' http
 
 	run conftest test "${fixture}/"*
-	[ $status -eq 0 ]
+	assert_success
 
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe.httpGet.port' junk
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-03'
+	assert_output --partial 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched TCP liveness probe port number" {
@@ -105,9 +108,9 @@ setup() {
 	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe.httpGet' 9999
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-03'
+	assert_output --partial 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched TCP liveness probe port name" {
@@ -118,14 +121,14 @@ setup() {
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' tcp
 
 	run conftest test "${fixture}/"*
-	[ $status -eq 0 ]
+	assert_success
 
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe.tcpSocket.port' junk
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-03'
+	assert_output --partial 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched HTTP readiness probe port number" {
@@ -137,9 +140,9 @@ setup() {
 	cat "${fixture}/deployment.yml"
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-03'
+	assert_output --partial 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched HTTP readiness probe port name" {
@@ -150,14 +153,14 @@ setup() {
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' http
 
 	run conftest test "${fixture}/"*
-	[ $status -eq 0 ]
+	assert_success
 
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe.httpGet.port' junk
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-03'
+	assert_output --partial 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched TCP readiness probe port number" {
@@ -168,9 +171,9 @@ setup() {
 	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe.httpGet' 9999
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-03'
+	assert_output --partial 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched TCP readiness probe port name" {
@@ -181,12 +184,12 @@ setup() {
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' tcp
 
 	run conftest test "${fixture}/"*
-	[ $status -eq 0 ]
+	assert_success
 
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe.tcpSocket.port' junk
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DPL-03'
+	assert_output --partial 'DPL-03'
 }

@@ -1,8 +1,11 @@
 #!/usr/bin/env basts
 
+load vendor/bats-support/load
+load vendor/bats-assert/load
+
 setup() {
 	run conftest test --namespace datadog -d test/fixtures/data test/fixtures/datadog/*
-	[ $status -eq 0 ]
+	assert_success
 }
 
 #############################################################
@@ -18,9 +21,9 @@ setup() {
 	yq d -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/tags"'
 
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-01'
+	assert_output --partial 'DOG-01'
 }
 
 @test "DOG-01 - Deployment empty tag annotation" {
@@ -30,9 +33,9 @@ setup() {
 	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/tags"', '{}'
 
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-01'
+	assert_output --partial 'DOG-01'
 }
 
 @test "DOG-01 - Deployment missing annotations" {
@@ -42,9 +45,9 @@ setup() {
 	yq d -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations'
 
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-01'
+	assert_output --partial 'DOG-01'
 }
 
 @test "DOG-01 - Job missing tags annotation" {
@@ -54,9 +57,9 @@ setup() {
 	yq d -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/tags"'
 
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-01'
+	assert_output --partial 'DOG-01'
 }
 
 @test "DOG-01 - Job empty tag annotation" {
@@ -66,9 +69,9 @@ setup() {
 	yq w -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/tags"', '{}'
 
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-01'
+	assert_output --partial 'DOG-01'
 }
 
 @test "DOG-01 - Job missing annotations" {
@@ -78,9 +81,9 @@ setup() {
 	yq d -i "${fixture}/job.yml" 'spec.template.metadata.annotations'
 
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-01'
+	assert_output --partial 'DOG-01'
 }
 
 @test "DOG-01 - CronJob missing tags annotation" {
@@ -90,9 +93,9 @@ setup() {
 	yq d -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/tags"'
 
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-01'
+	assert_output --partial 'DOG-01'
 }
 
 @test "DOG-01 - CronJob empty tag annotation" {
@@ -102,9 +105,9 @@ setup() {
 	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/tags"', '{}'
 
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-01'
+	assert_output --partial 'DOG-01'
 }
 
 @test "DOG-01 - CronJob missing annotations" {
@@ -114,9 +117,9 @@ setup() {
 	yq d -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations'
 
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-01'
+	assert_output --partial 'DOG-01'
 }
 
 #############################################################
@@ -132,9 +135,9 @@ setup() {
 	yq d -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - Deployment log annotation incorrect source" {
@@ -144,9 +147,9 @@ setup() {
 	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "junk", "service": "foo" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - Deployment log annotation missing source" {
@@ -156,9 +159,9 @@ setup() {
 	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "service": "foo" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - Deployment log annotation missing service" {
@@ -168,9 +171,9 @@ setup() {
 	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "docker" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - Deployment unmapped log annotation" {
@@ -180,9 +183,9 @@ setup() {
 	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/junk.logs"' '[{ "source": "docker", "service": "foo" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - Job missing container log annotation" {
@@ -192,9 +195,9 @@ setup() {
 	yq d -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - Job log annotation incorrect source" {
@@ -204,9 +207,9 @@ setup() {
 	yq w -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "junk", "service": "foo" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - Job log annotation missing source" {
@@ -216,9 +219,9 @@ setup() {
 	yq w -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "service": "foo" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - Job log annotation missing service" {
@@ -228,9 +231,9 @@ setup() {
 	yq w -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "docker" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - Job unmapped log annotation" {
@@ -240,9 +243,9 @@ setup() {
 	yq w -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/junk.logs"' '[{ "source": "docker", "service": "foo" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - CronJob missing container log annotation" {
@@ -252,9 +255,9 @@ setup() {
 	yq d -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - CronJob log annotation incorrect source" {
@@ -264,9 +267,9 @@ setup() {
 	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "junk", "service": "foo" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - CronJob log annotation missing source" {
@@ -276,9 +279,9 @@ setup() {
 	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "service": "foo" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - CronJob log annotation missing service" {
@@ -288,9 +291,9 @@ setup() {
 	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "docker" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }
 
 @test "DOG-02 - CronJob unmapped log annotation" {
@@ -300,7 +303,7 @@ setup() {
 	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/junk.logs"' '[{ "source": "docker", "service": "foo" }]'
 
 	run conftest test --namespace datadog "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'DOG-02'
+	assert_output --partial 'DOG-02'
 }

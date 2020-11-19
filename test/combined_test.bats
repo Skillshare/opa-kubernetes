@@ -1,9 +1,12 @@
 #!/usr/bin/env basts
 
+load vendor/bats-support/load
+load vendor/bats-assert/load
+
 setup() {
 	run conftest test \
 		--combine --namespace combined test/fixtures/pass/*
-	[ $status -eq 0 ]
+	assert_success
 }
 
 @test "CMB-01 - Deployment container ConfigMap" {
@@ -17,9 +20,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-01'
+	assert_output --partial 'CMB-01'
 }
 
 @test "CMB-01 - Deployment container Secret" {
@@ -33,9 +36,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-01'
+	assert_output --partial 'CMB-01'
 }
 
 @test "CMB-01 - Job container ConfigMap" {
@@ -49,9 +52,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-01'
+	assert_output --partial 'CMB-01'
 }
 
 @test "CMB-01 - Job container envFrom Secret" {
@@ -65,9 +68,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-01'
+	assert_output --partial 'CMB-01'
 }
 
 @test "CMB-02 - Deployment volume from ConfigMap" {
@@ -81,9 +84,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-02'
+	assert_output --partial 'CMB-02'
 }
 
 @test "CMB-02 - Deployment volume from Secret" {
@@ -97,9 +100,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-02'
+	assert_output --partial 'CMB-02'
 }
 
 @test "CMB-02 - Job volume from ConfigMap" {
@@ -113,9 +116,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-02'
+	assert_output --partial 'CMB-02'
 }
 
 @test "CMB-02 - Job volume from Secret" {
@@ -129,9 +132,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-02'
+	assert_output --partial 'CMB-02'
 }
 
 @test "CMB-03 - Service selector matches Deployment labels" {
@@ -143,9 +146,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-03'
+	assert_output --partial 'CMB-03'
 }
 
 @test "CMB-04 - HPA scale target matches Deployment" {
@@ -157,9 +160,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-04'
+	assert_output --partial 'CMB-04'
 }
 
 @test "CMB-05 - Service port matches numbered container port" {
@@ -171,9 +174,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-05'
+	assert_output --partial 'CMB-05'
 }
 
 @test "CMB-05 - Service port matches named container port" {
@@ -186,7 +189,7 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -eq 0 ]
+	assert_success
 
 	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' http
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' junk
@@ -194,9 +197,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-05'
+	assert_output --partial 'CMB-05'
 
 	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' junk
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' http
@@ -204,9 +207,9 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-05'
+	assert_output --partial 'CMB-05'
 }
 
 @test "CMB-06 - HPA Deployment replicas" {
@@ -218,7 +221,7 @@ setup() {
 	run conftest test \
 		--combine --namespace combined \
 		"${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'CMB-06'
+	assert_output --partial 'CMB-06'
 }

@@ -1,8 +1,11 @@
 #!/usr/bin/env basts
 
+load vendor/bats-support/load
+load vendor/bats-assert/load
+
 setup() {
 	run conftest test test/fixtures/pass/horizontal_pod_autoscaler.yml
-	[ $status -eq 0 ]
+	assert_success
 }
 
 @test "HPA-01 - HPA replica sanity" {
@@ -13,7 +16,7 @@ setup() {
 	yq w -i "${fixture}/horizontal_pod_autoscaler.yml" 'spec.maxReplicas' 1
 
 	run conftest test "${fixture}/"*
-	[ $status -ne 0 ]
+	assert_failure
 
-	echo "${output[@]}" | grep -qF 'HPA-01'
+	assert_output --partial 'HPA-01'
 }
