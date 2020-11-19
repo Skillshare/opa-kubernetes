@@ -2,6 +2,7 @@
 
 load vendor/bats-support/load
 load vendor/bats-assert/load
+load support/assertions
 
 setup() {
 	run conftest test \
@@ -18,7 +19,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'MTA-01'
+	assert_denied 'MTA-01'
 }
 
 @test "MTA-02 - deployment labels" {
@@ -30,7 +31,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'MTA-02'
+	assert_denied 'MTA-02'
 }
 
 @test "MTA-03 - name length" {
@@ -44,7 +45,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'MTA-03'
+	assert_denied 'MTA-03'
 }
 
 @test "MTA-03 - name validation" {
@@ -57,7 +58,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'MTA-03'
+	assert_denied 'MTA-03'
 
 	# disallowed {{ }} character
 	yq w -i "${fixture}/deployment.yml" 'metadata.name' '{{FOO}}'
@@ -65,7 +66,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'MTA-03'
+	assert_denied 'MTA-03'
 
 	# cannot start with -
 	yq w -i "${fixture}/deployment.yml" 'metadata.name' -- '-foo'
@@ -73,7 +74,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'MTA-03'
+	assert_denied 'MTA-03'
 
 	# cannot start with _
 	yq w -i "${fixture}/deployment.yml" 'metadata.name' '_foo'
@@ -81,7 +82,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'MTA-03'
+	assert_denied 'MTA-03'
 
 	# cannot end with -
 	yq w -i "${fixture}/deployment.yml" 'metadata.name' 'foo-'
@@ -89,7 +90,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'MTA-03'
+	assert_denied 'MTA-03'
 
 	# cannot end with .
 	yq w -i "${fixture}/deployment.yml" 'metadata.name' 'foo.'
@@ -97,7 +98,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'MTA-03'
+	assert_denied 'MTA-03'
 
 	# cannot end with _
 	yq w -i "${fixture}/deployment.yml" 'metadata.name' 'foo_'
@@ -105,5 +106,5 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'MTA-03'
+	assert_denied 'MTA-03'
 }

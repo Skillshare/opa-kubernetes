@@ -2,6 +2,7 @@
 
 load vendor/bats-support/load
 load vendor/bats-assert/load
+load support/assertions
 
 setup() {
 	run conftest test test/fixtures/pass/job.yml
@@ -17,5 +18,5 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'JOB-01'
+	assert_denied 'JOB-01'
 }

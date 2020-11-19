@@ -2,6 +2,7 @@
 
 load vendor/bats-support/load
 load vendor/bats-assert/load
+load support/assertions
 
 setup() {
 	run conftest test \
@@ -22,7 +23,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-01'
+	assert_denied 'CMB-01'
 }
 
 @test "CMB-01 - Deployment container Secret" {
@@ -38,7 +39,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-01'
+	assert_denied 'CMB-01'
 }
 
 @test "CMB-01 - Job container ConfigMap" {
@@ -54,7 +55,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-01'
+	assert_denied 'CMB-01'
 }
 
 @test "CMB-01 - Job container envFrom Secret" {
@@ -70,7 +71,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-01'
+	assert_denied 'CMB-01'
 }
 
 @test "CMB-02 - Deployment volume from ConfigMap" {
@@ -86,7 +87,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-02'
+	assert_denied 'CMB-02'
 }
 
 @test "CMB-02 - Deployment volume from Secret" {
@@ -102,7 +103,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-02'
+	assert_denied 'CMB-02'
 }
 
 @test "CMB-02 - Job volume from ConfigMap" {
@@ -118,7 +119,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-02'
+	assert_denied 'CMB-02'
 }
 
 @test "CMB-02 - Job volume from Secret" {
@@ -134,7 +135,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-02'
+	assert_denied 'CMB-02'
 }
 
 @test "CMB-03 - Service selector matches Deployment labels" {
@@ -148,7 +149,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-03'
+	assert_denied 'CMB-03'
 }
 
 @test "CMB-04 - HPA scale target matches Deployment" {
@@ -162,7 +163,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-04'
+	assert_denied 'CMB-04'
 }
 
 @test "CMB-05 - Service port matches numbered container port" {
@@ -176,7 +177,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-05'
+	assert_denied 'CMB-05'
 }
 
 @test "CMB-05 - Service port matches named container port" {
@@ -199,7 +200,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-05'
+	assert_denied 'CMB-05'
 
 	yq w -i "${fixture}/service.yml" 'spec.ports[0].targetPort' junk
 	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].ports[0].name' http
@@ -209,7 +210,7 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-05'
+	assert_denied 'CMB-05'
 }
 
 @test "CMB-06 - HPA Deployment replicas" {
@@ -223,5 +224,5 @@ setup() {
 		"${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'CMB-06'
+	assert_denied 'CMB-06'
 }

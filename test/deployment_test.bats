@@ -2,6 +2,7 @@
 
 load vendor/bats-support/load
 load vendor/bats-assert/load
+load support/assertions
 
 setup() {
 	run conftest test test/fixtures/pass/deployment.yml
@@ -17,7 +18,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-01'
+	assert_denied 'DPL-01'
 }
 
 @test "DPL-01 - containers set readiness probes" {
@@ -29,7 +30,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-01'
+	assert_denied 'DPL-01'
 }
 
 @test "DPL-02 - selector matches template labels" {
@@ -41,7 +42,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-02'
+	assert_denied 'DPL-02'
 }
 
 @test "DPL-02 - empty label selector" {
@@ -53,7 +54,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-02'
+	assert_denied 'DPL-02'
 }
 
 @test "DPL-02 - template labels missing" {
@@ -65,7 +66,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-02'
+	assert_denied 'DPL-02'
 }
 
 @test "DPL-03 - containers mismatched HTTP liveness probe port number" {
@@ -79,7 +80,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-03'
+	assert_denied 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched HTTP liveness probe port name" {
@@ -97,7 +98,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-03'
+	assert_denied 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched TCP liveness probe port number" {
@@ -110,7 +111,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-03'
+	assert_denied 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched TCP liveness probe port name" {
@@ -128,7 +129,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-03'
+	assert_denied 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched HTTP readiness probe port number" {
@@ -142,7 +143,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-03'
+	assert_denied 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched HTTP readiness probe port name" {
@@ -160,7 +161,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-03'
+	assert_denied 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched TCP readiness probe port number" {
@@ -173,7 +174,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-03'
+	assert_denied 'DPL-03'
 }
 
 @test "DPL-03 - containers mismatched TCP readiness probe port name" {
@@ -191,5 +192,5 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DPL-03'
+	assert_denied 'DPL-03'
 }

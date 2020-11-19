@@ -2,6 +2,7 @@
 
 load vendor/bats-support/load
 load vendor/bats-assert/load
+load support/assertions
 
 setup() {
 	run conftest test test/fixtures/pass/horizontal_pod_autoscaler.yml
@@ -18,5 +19,5 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'HPA-01'
+	assert_denied 'HPA-01'
 }

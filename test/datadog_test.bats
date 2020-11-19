@@ -2,6 +2,7 @@
 
 load vendor/bats-support/load
 load vendor/bats-assert/load
+load support/assertions
 
 setup() {
 	run conftest test --namespace datadog -d test/fixtures/data test/fixtures/datadog/*
@@ -23,7 +24,7 @@ setup() {
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-01'
+	assert_denied 'DOG-01'
 }
 
 @test "DOG-01 - Deployment empty tag annotation" {
@@ -35,7 +36,7 @@ setup() {
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-01'
+	assert_denied 'DOG-01'
 }
 
 @test "DOG-01 - Deployment missing annotations" {
@@ -47,7 +48,7 @@ setup() {
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-01'
+	assert_denied 'DOG-01'
 }
 
 @test "DOG-01 - Job missing tags annotation" {
@@ -59,7 +60,7 @@ setup() {
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-01'
+	assert_denied 'DOG-01'
 }
 
 @test "DOG-01 - Job empty tag annotation" {
@@ -71,7 +72,7 @@ setup() {
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-01'
+	assert_denied 'DOG-01'
 }
 
 @test "DOG-01 - Job missing annotations" {
@@ -83,7 +84,7 @@ setup() {
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-01'
+	assert_denied 'DOG-01'
 }
 
 @test "DOG-01 - CronJob missing tags annotation" {
@@ -95,7 +96,7 @@ setup() {
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-01'
+	assert_denied 'DOG-01'
 }
 
 @test "DOG-01 - CronJob empty tag annotation" {
@@ -107,7 +108,7 @@ setup() {
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-01'
+	assert_denied 'DOG-01'
 }
 
 @test "DOG-01 - CronJob missing annotations" {
@@ -119,7 +120,7 @@ setup() {
 	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-01'
+	assert_denied 'DOG-01'
 }
 
 #############################################################
@@ -137,7 +138,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - Deployment log annotation incorrect source" {
@@ -149,7 +150,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - Deployment log annotation missing source" {
@@ -161,7 +162,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - Deployment log annotation missing service" {
@@ -173,7 +174,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - Deployment unmapped log annotation" {
@@ -185,7 +186,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - Job missing container log annotation" {
@@ -197,7 +198,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - Job log annotation incorrect source" {
@@ -209,7 +210,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - Job log annotation missing source" {
@@ -221,7 +222,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - Job log annotation missing service" {
@@ -233,7 +234,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - Job unmapped log annotation" {
@@ -245,7 +246,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - CronJob missing container log annotation" {
@@ -257,7 +258,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - CronJob log annotation incorrect source" {
@@ -269,7 +270,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - CronJob log annotation missing source" {
@@ -281,7 +282,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - CronJob log annotation missing service" {
@@ -293,7 +294,7 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }
 
 @test "DOG-02 - CronJob unmapped log annotation" {
@@ -305,5 +306,5 @@ setup() {
 	run conftest test --namespace datadog "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'DOG-02'
+	assert_denied 'DOG-02'
 }

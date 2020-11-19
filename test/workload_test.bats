@@ -2,6 +2,7 @@
 
 load vendor/bats-support/load
 load vendor/bats-assert/load
+load support/assertions
 
 setup() {
 	run conftest test test/fixtures/pass/deployment.yml test/fixtures/pass/job.yml
@@ -17,7 +18,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-01'
+	assert_denied 'WRK-01'
 }
 
 @test "WRK-01 - Deployment containers set resource limits" {
@@ -29,7 +30,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-01'
+	assert_denied 'WRK-01'
 }
 
 @test "WRK-01 - Job containers set resource requests" {
@@ -41,7 +42,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-01'
+	assert_denied 'WRK-01'
 }
 
 @test "WRK-01 - Job containers set resource limits" {
@@ -53,7 +54,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-01'
+	assert_denied 'WRK-01'
 }
 
 @test "WRK-01 - CronJob containers set resource requests" {
@@ -65,7 +66,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-01'
+	assert_denied 'WRK-01'
 }
 
 @test "WRK-01 - CronJob containers set resource limits" {
@@ -77,7 +78,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-01'
+	assert_denied 'WRK-01'
 }
 
 @test "WRK-02 - Deployment containers volume mount" {
@@ -89,7 +90,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-02'
+	assert_denied 'WRK-02'
 }
 
 @test "WRK-02 - Job containers volume mount" {
@@ -101,7 +102,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-02'
+	assert_denied 'WRK-02'
 }
 
 @test "WRK-02 - CronJob containers volume mount" {
@@ -113,7 +114,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-02'
+	assert_denied 'WRK-02'
 }
 
 @test "WRK-03 - Deployment unmounted volume" {
@@ -125,7 +126,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-03'
+	assert_denied 'WRK-03'
 }
 
 @test "WRK-03 - Job unmounted volume" {
@@ -137,7 +138,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-03'
+	assert_denied 'WRK-03'
 }
 
 @test "WRK-03 - CronJob unmounted volume" {
@@ -149,7 +150,7 @@ setup() {
 	run conftest test "${fixture}/"*
 	assert_failure
 
-	assert_output --partial 'WRK-03'
+	assert_denied 'WRK-03'
 }
 
 @test "WRK-03 - Deployments without volumes" {
