@@ -7,6 +7,7 @@ ENV HELM_SECRETS_SOPS_DRIVER_VERSION=0.1.0
 ENV HELM_CONFTEST_VERSION=0.1.0
 
 ENV POLICY_PATH=/usr/src/opa-kubernetes
+ENV DATA_PATH=/usr/share/opa-kubernetes
 
 RUN apk add -X http://dl-cdn.alpinelinux.org/alpine/edge/community curl bats yq rsync git
 
@@ -42,6 +43,7 @@ RUN kubeval --version \
 	&& yq --version
 
 COPY policy $POLICY_PATH
+COPY data $DATA_PATH
 COPY bin/check-release /usr/local/bin
 
 ENTRYPOINT [ ]
