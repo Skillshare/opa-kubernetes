@@ -78,7 +78,7 @@ main() {
 	fi
 
 	if [ ! -f "deploy/test/values.yaml" ]; then
-		log::error "dpeloy/test/values.yaml not found"
+		log::error "deploy/test/values.yaml not found"
 		return 1
 	fi
 
