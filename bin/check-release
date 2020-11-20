@@ -84,7 +84,7 @@ main() {
 
 	local -a helm_args=()
 
-	helm_args=(helm secrets-sops-driver secrets conftest chart)
+	helm_args=(helm conftest chart)
 	helm_args+=(--generate-name)
 	helm_args+=(-f deploy/test/values.yaml)
 
