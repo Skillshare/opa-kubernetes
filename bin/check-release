@@ -102,7 +102,9 @@ main() {
 	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}"
 
 	log::indicator "Checking combined policies"
-	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}" --policy-namespace combined
+	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}" \
+		--combine \
+		--policy-namespace combined
 
 	log::indicator "Checking DataDog policies"
 	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}" \
