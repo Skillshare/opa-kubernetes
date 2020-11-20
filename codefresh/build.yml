@@ -31,6 +31,14 @@ steps:
     commands:
       - git submodule update --init --recursive
 
+  clone_blueprint:
+    stage: prepare
+    title: Clone blueprint
+    type: git-clone
+    repo: skillshare/blueprint
+    revision: feature/compliant-manifests
+    git: github
+
   build:
     stage: prepare
     title: Build step image
@@ -48,6 +56,16 @@ steps:
     working_directory: ${{clone}}
     commands:
       - task test:ci
+
+  test_blueprint:
+    stage: test
+    title: Run tests
+    image: ${{build}}
+    working_directory: ${{clone_blueprint}}
+    commands:
+      - check-release sandbox
+      - check-release staging
+      - check-release prod
 
   push:
     stage: release
