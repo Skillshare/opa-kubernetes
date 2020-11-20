@@ -41,7 +41,7 @@ steps:
 
   build:
     stage: prepare
-    title: Build step image
+    title: Build
     type: build
     registry: utility
     working_directory: ${{clone}}
@@ -51,7 +51,7 @@ steps:
 
   test:
     stage: test
-    title: Run tests
+    title: Test policies
     image: ${{build}}
     working_directory: ${{clone}}
     commands:
@@ -59,7 +59,7 @@ steps:
 
   test_blueprint:
     stage: test
-    title: Run tests
+    title: Test blueprint
     image: ${{build}}
     working_directory: ${{clone_blueprint}}
     commands:
