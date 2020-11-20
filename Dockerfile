@@ -42,6 +42,10 @@ RUN kubeval --version \
 	&& conftest --version \
 	&& yq --version
 
+RUN helm plugin ls | grep secrets | grep -qF "${HELM_SECRETS_VERSION}"
+RUN helm plugin ls | grep secrets-sops-driver | grep -qF "${HELM_SECRETS_SOPS_DRIVER_VERSION}"
+RUN helm plugin ls | grep conftest | grep -qF "${HELM_CONFTEST_VERSION}"
+
 COPY policy $POLICY_PATH
 COPY data $DATA_PATH
 COPY bin/check-release /usr/local/bin
