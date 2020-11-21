@@ -72,8 +72,9 @@ Applies to: `Deployment`, `Job`, `CronJob`
 
 Applies to: `Deployment`, `Job`, `CronJob`
 
-- [DOG-01](RULES.md#DOG-01): Annotated with required tags
-- [DOG-02](RULES.md#DOG-02): Containers annotated for log collection
+- [DOG-01](RULES.md#DOG-01): [Unified Service
+  Tagging](https://docs.datadoghq.com/getting_started/tagging/unified_service_tagging/?tab=kubernetes)
+- [DOG-02](RULES.md#DOG-02): APM setup
 
 [opa]: https://www.openpolicyagent.org/
 [conftest]: https://conftest.dev

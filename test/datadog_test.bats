@@ -5,7 +5,7 @@ load vendor/bats-assert/load
 load support/assertions
 
 setup() {
-	run conftest test --namespace datadog -d test/fixtures/data test/fixtures/datadog/*
+	run conftest test --namespace datadog test/fixtures/pass/*
 	assert_success
 }
 
@@ -15,112 +15,79 @@ setup() {
 #                                                           #
 #############################################################
 
-@test "DOG-01 - Deployment missing tags annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
+@test "DOG-01 - Deployment missing tags" {
+	tags=(env service version)
 
-	yq d -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/tags"'
+	for tag in "${tags[@]}"; do
+		yq d test/fixtures/pass/deployment.yml \
+			"metadata.labels.\"tags.datadoghq.com/${tag}\"" > "${BATS_TMPDIR}/deployment.yml"
 
-	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	assert_failure
+		run conftest test --namespace datadog "${BATS_TMPDIR}/deployment.yml"
+		assert_failure
+		assert_denied 'DOG-01'
 
-	assert_denied 'DOG-01'
+		yq d test/fixtures/pass/deployment.yml \
+			"spec.template.metadata.labels.\"tags.datadoghq.com/${tag}\"" > "${BATS_TMPDIR}/deployment.yml"
+		run conftest test --namespace datadog "${BATS_TMPDIR}/deployment.yml"
+		assert_failure
+		assert_denied 'DOG-01'
+
+		yq d test/fixtures/pass/deployment.yml \
+			"spec.template.spec.containers[0].env" > "${BATS_TMPDIR}/deployment.yml"
+		run conftest test --namespace datadog "${BATS_TMPDIR}/deployment.yml"
+		assert_failure
+		assert_denied 'DOG-01'
+	done
 }
 
-@test "DOG-01 - Deployment empty tag annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
+@test "DOG-01 - Job missing tags" {
+	tags=(env service version)
 
-	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/tags"', '{}'
+	for tag in "${tags[@]}"; do
+		yq d test/fixtures/pass/job.yml \
+			"metadata.labels.\"tags.datadoghq.com/${tag}\"" > "${BATS_TMPDIR}/job.yml"
 
-	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	assert_failure
+		run conftest test --namespace datadog "${BATS_TMPDIR}/job.yml"
+		assert_failure
+		assert_denied 'DOG-01'
 
-	assert_denied 'DOG-01'
+		yq d test/fixtures/pass/job.yml \
+			"spec.template.metadata.labels.\"tags.datadoghq.com/${tag}\"" > "${BATS_TMPDIR}/job.yml"
+		run conftest test --namespace datadog "${BATS_TMPDIR}/job.yml"
+		assert_failure
+		assert_denied 'DOG-01'
+
+		yq d test/fixtures/pass/deployment.yml \
+			"spec.template.spec.containers[0].env" > "${BATS_TMPDIR}/job.yml"
+		run conftest test --namespace datadog "${BATS_TMPDIR}/job.yml"
+		assert_failure
+		assert_denied 'DOG-01'
+	done
 }
 
-@test "DOG-01 - Deployment missing annotations" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
+@test "DOG-01 - CronJob missing tags" {
+	tags=(env service version)
 
-	yq d -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations'
+	for tag in "${tags[@]}"; do
+		yq d test/fixtures/pass/cron_job.yml \
+			"metadata.labels.\"tags.datadoghq.com/${tag}\"" > "${BATS_TMPDIR}/cron_job.yml"
 
-	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	assert_failure
+		run conftest test --namespace datadog "${BATS_TMPDIR}/cron_job.yml"
+		assert_failure
+		assert_denied 'DOG-01'
 
-	assert_denied 'DOG-01'
-}
+		yq d test/fixtures/pass/cron_job.yml \
+			"spec.jobTemplate.spec.template.metadata.labels.\"tags.datadoghq.com/${tag}\"" > "${BATS_TMPDIR}/cron_job.yml"
+		run conftest test --namespace datadog "${BATS_TMPDIR}/cron_job.yml"
+		assert_failure
+		assert_denied 'DOG-01'
 
-@test "DOG-01 - Job missing tags annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq d -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/tags"'
-
-	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-01'
-}
-
-@test "DOG-01 - Job empty tag annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/tags"', '{}'
-
-	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-01'
-}
-
-@test "DOG-01 - Job missing annotations" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq d -i "${fixture}/job.yml" 'spec.template.metadata.annotations'
-
-	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-01'
-}
-
-@test "DOG-01 - CronJob missing tags annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq d -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/tags"'
-
-	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-01'
-}
-
-@test "DOG-01 - CronJob empty tag annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/tags"', '{}'
-
-	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-01'
-}
-
-@test "DOG-01 - CronJob missing annotations" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq d -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations'
-
-	run conftest test --namespace datadog -d test/fixtures/data "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-01'
+		yq d test/fixtures/pass/cron_job.yml \
+			"spec.jobTemplate.spec.template.spec.containers[0].env" > "${BATS_TMPDIR}/cron_job.yml"
+		run conftest test --namespace datadog "${BATS_TMPDIR}/cron_job.yml"
+		assert_failure
+		assert_denied 'DOG-01'
+	done
 }
 
 #############################################################
@@ -129,182 +96,26 @@ setup() {
 #                                                           #
 #############################################################
 
-@test "DOG-02 - Deployment missing container log annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq d -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"'
-
-	run conftest test --namespace datadog "${fixture}/"*
+@test "DOG-02 - Deployment missing DD_AGENT_HOST" {
+	yq d test/fixtures/pass/deployment.yml \
+		"spec.template.spec.containers[0].env" > "${BATS_TMPDIR}/deployment.yml"
+	run conftest test --namespace datadog "${BATS_TMPDIR}/deployment.yml"
 	assert_failure
-
 	assert_denied 'DOG-02'
 }
 
-@test "DOG-02 - Deployment log annotation incorrect source" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "junk", "service": "foo" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
+@test "DOG-02 - Job missing DD_AGENT_HOST" {
+	yq d test/fixtures/pass/deployment.yml \
+		"spec.template.spec.containers[0].env" > "${BATS_TMPDIR}/job.yml"
+	run conftest test --namespace datadog "${BATS_TMPDIR}/job.yml"
 	assert_failure
-
 	assert_denied 'DOG-02'
 }
 
-@test "DOG-02 - Deployment log annotation missing source" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "service": "foo" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
+@test "DOG-02 - CronJob missing DD_AGENT_HOST" {
+	yq d test/fixtures/pass/cron_job.yml \
+		"spec.jobTemplate.spec.template.spec.containers[0].env" > "${BATS_TMPDIR}/cron_job.yml"
+	run conftest test --namespace datadog "${BATS_TMPDIR}/cron_job.yml"
 	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - Deployment log annotation missing service" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "docker" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - Deployment unmapped log annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/junk.logs"' '[{ "source": "docker", "service": "foo" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - Job missing container log annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq d -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - Job log annotation incorrect source" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "junk", "service": "foo" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - Job log annotation missing source" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "service": "foo" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - Job log annotation missing service" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "docker" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - Job unmapped log annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/job.yml" 'spec.template.metadata.annotations."ad.datadoghq.com/junk.logs"' '[{ "source": "docker", "service": "foo" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - CronJob missing container log annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq d -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - CronJob log annotation incorrect source" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "junk", "service": "foo" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - CronJob log annotation missing source" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "service": "foo" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - CronJob log annotation missing service" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/dummy.logs"' '[{ "source": "docker" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DOG-02'
-}
-
-@test "DOG-02 - CronJob unmapped log annotation" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/datadog/ "${fixture}"
-
-	yq w -i "${fixture}/cron_job.yml" 'spec.jobTemplate.spec.template.metadata.annotations."ad.datadoghq.com/junk.logs"' '[{ "source": "docker", "service": "foo" }]'
-
-	run conftest test --namespace datadog "${fixture}/"*
-	assert_failure
-
 	assert_denied 'DOG-02'
 }

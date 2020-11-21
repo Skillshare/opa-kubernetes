@@ -15,3 +15,10 @@ load vendor/bats-assert/load
 		test/fixtures/pass/*
 	assert_success
 }
+
+@test "Valid data passes datadog package" {
+	run conftest test \
+		--namespace datadog \
+		test/fixtures/pass/*
+	assert_success
+}

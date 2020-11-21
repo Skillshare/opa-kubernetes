@@ -10,6 +10,9 @@ metadata:
     app.kubernetes.io/component: tests
     app.kubernetes.io/part-of: dummy
     app.kubernetes.io/managed-by: hand
+    tags.datadoghq.com/env: prod
+    tags.datadoghq.com/service: test
+    tags.datadoghq.com/version: 0.1.0
 spec:
   selector:
     matchLabels:
@@ -24,6 +27,9 @@ spec:
         app.kubernetes.io/component: tests
         app.kubernetes.io/part-of: dummy
         app.kubernetes.io/managed-by: hand
+        tags.datadoghq.com/env: prod
+        tags.datadoghq.com/service: test
+        tags.datadoghq.com/version: 0.1.0
     spec:
       volumes:
         - name: secrets
@@ -37,6 +43,23 @@ spec:
           image: dummy
           ports:
             - containerPort: 8080
+          env:
+            - name: DD_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/env']
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/version']
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           envFrom:
             - configMapRef:
                 name: test
