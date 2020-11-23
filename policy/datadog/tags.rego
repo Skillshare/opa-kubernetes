@@ -27,7 +27,7 @@ deny[msg] {
 	tag := universal_tags[_]
 	label := sprintf("tags.datadoghq.com/%s", [tag])
 	not input.metadata.labels[label]
-	msg = sprintf("[DOG-01] %s must set %s label", [name, label])
+	msg = sprintf("[DOG-01] %s %s must set %s label", [input.kind, name, label])
 }
 
 deny[msg] {
@@ -35,7 +35,7 @@ deny[msg] {
 	tag := universal_tags[_]
 	label := sprintf("tags.datadoghq.com/%s", [tag])
 	not template.metadata.labels[label]
-	msg = sprintf("[DOG-01] %s must set %s template label", [name, label])
+	msg = sprintf("[DOG-01] %s %s must set %s template label", [input.kind, name, label])
 }
 
 deny[msg] {
@@ -43,7 +43,7 @@ deny[msg] {
 	tag := universal_tags[_]
 	container := template.spec.containers[_]
 	not container_env_var(container, tag)
-	msg = sprintf("[DOG-01] %s container %s must have env var %s tag", [name, container.name, tag])
+	msg = sprintf("[DOG-01] %s %s container %s must have env var %s tag", [input.kind, name, container.name, tag])
 }
 
 deny[msg] {
@@ -51,7 +51,7 @@ deny[msg] {
 	label := "tags.datadoghq.com/env"
 	env := input.metadata.labels[label]
 	not allowed_envs[env]
-	msg = sprintf("[DOG-01] %s only allows env: %v", [name, allowed_envs])
+	msg = sprintf("[DOG-01] %s %s only allows env: %v", [input.kind, name, allowed_envs])
 }
 
 deny[msg] {
@@ -59,5 +59,5 @@ deny[msg] {
 	label := "tags.datadoghq.com/env"
 	env := template.metadata.labels[label]
 	not allowed_envs[env]
-	msg = sprintf("[DOG-01] %s template only allows env: %v", [name, allowed_envs])
+	msg = sprintf("[DOG-01] %s %s template only allows env: %v", [input.kind, name, allowed_envs])
 }
