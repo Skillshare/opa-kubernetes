@@ -4,6 +4,8 @@ import data.kubernetes
 
 universal_tags := ["env", "service", "version"]
 
+allowed_envs := {"sandbox", "staging", "prod"}
+
 name = input.metadata.name
 
 container_env_var(container, tag) {
@@ -42,4 +44,20 @@ deny[msg] {
 	container := template.spec.containers[_]
 	not container_env_var(container, tag)
 	msg = sprintf("[DOG-01] %s container %s must have env var %s tag", [name, container.name, tag])
+}
+
+deny[msg] {
+	kubernetes.is_workload
+	label := "tags.datadoghq.com/env"
+	env := input.metadata.labels[label]
+	not allowed_envs[env]
+	msg = sprintf("[DOG-01] %s only allows env: %v", [name, allowed_envs])
+}
+
+deny[msg] {
+	template := kubernetes.workload_template(input)
+	label := "tags.datadoghq.com/env"
+	env := template.metadata.labels[label]
+	not allowed_envs[env]
+	msg = sprintf("[DOG-01] %s template only allows env: %v", [name, allowed_envs])
 }
