@@ -129,4 +129,29 @@ ad.datadoghq.com/dummy.logs: |
 
 Where `dummy` is a declared container.
 
+## SBX-01
+
+Check the `apps` ingress whitelists our vpns. Exampl valid annotation:
+
+```
+annotations:
+  kubernetes.io/ingress.class: apps
+  nginx.ingress.kubernetes.io/whitelist-source-range: "34.196.181.12/32,35.175.17.80/32"
+```
+
+## SBX-02
+
+`HorizontalPodAutoscaler` has two or less `maxReplicas`. This keeps
+resource utilization low on the cluster.
+
+## STG-01
+
+Check the `apps` ingress whitelists our vpns. Exampl valid annotation:
+
+```
+annotations:
+  kubernetes.io/ingress.class: apps
+  nginx.ingress.kubernetes.io/whitelist-source-range: "34.196.181.12/32,35.175.17.80/32"
+```
+
 [labels]: https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/#labels

@@ -31,12 +31,20 @@ steps:
     commands:
       - git submodule update --init --recursive
 
-  clone_blueprint:
+  clone_blueprint_master:
     stage: prepare
     title: Clone blueprint
     type: git-clone
     repo: skillshare/blueprint
-    revision: feature/compliant-manifests
+    revision: master
+    git: github
+
+  clone_blueprint_branch:
+    stage: prepare
+    title: Clone blueprint
+    type: git-clone
+    repo: skillshare/blueprint
+    revision: ${{CF_BRANCH}}
     git: github
 
   build:
@@ -57,15 +65,35 @@ steps:
     commands:
       - task test:ci
 
-  test_blueprint:
+  test_blueprint_branch:
     stage: test
-    title: Test blueprint
+    title: Test blueprint branch
     image: ${{build}}
-    working_directory: ${{clone_blueprint}}
+    working_directory: ${{clone_blueprint_branch}}
     commands:
       - check-release sandbox
       - check-release staging
       - check-release prod
+    when:
+      steps:
+        - name: clone_blueprint_branch
+          on:
+            - success
+
+  test_blueprint_master:
+    stage: test
+    title: Test blueprint master
+    image: ${{build}}
+    working_directory: ${{clone_blueprint_master}}
+    commands:
+      - check-release sandbox
+      - check-release staging
+      - check-release prod
+    when:
+      steps:
+        - name: clone_blueprint_master
+          on:
+            - success
 
   push:
     stage: release
@@ -75,3 +103,7 @@ steps:
     registry: utility
     image_name: conftest/kubernetes
     tag: latest
+    when:
+      condition:
+        all:
+          executeForMasterBranch: "'${{CF_BRANCH}}' == 'master'"

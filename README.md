@@ -79,6 +79,19 @@ Applies to: `Deployment`, `Job`, `CronJob`
 [opa]: https://www.openpolicyagent.org/
 [conftest]: https://conftest.dev
 
+### Sandbox
+
+Applies to `sandbox` environments
+
+- [SBX-01](RULES.md#STG-01): VPN only access
+- [SBX-02](RULES.md#STG-01): Max 2 replicas
+
+### Staging
+
+Applies to the `staging` environment
+
+- [STG-01](RULES.md#SBX-01): VPN only access
+
 ## Developing
 
 Add a new acceptance test in `test/` for the rule. Tests take valid

@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: RELEASE-NAME-blueprint
+  labels:
+    helm.sh/chart: blueprint-0.1.0
+    app.kubernetes.io/name: blueprint
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/part-of: blueprint
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "15c81c779e099b9cf9c671d846a7c5f34bb72d28"
+    app.kubernetes.io/component: app
+  annotations:
+    kubernetes.io/ingress.class: apps
+    nginx.ingress.kubernetes.io/whitelist-source-range: "34.196.181.12/32,35.175.17.80/32"
+spec:
+  rules:
+    - host: blueprint.staging.skillshare.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: RELEASE-NAME-blueprint
+              servicePort: http

@@ -59,10 +59,6 @@ main() {
 		return 1
 	fi
 
-	if [ -n "${2:-}" ]; then
-		policy_path="${2}"
-	fi
-
 	if [ ! -d "${policy_path}" ]; then
 		log::error "No such directory: ${policy_path}"
 		return 1
@@ -109,6 +105,19 @@ main() {
 	log::indicator "Checking DataDog policies"
 	log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}" \
 		--policy-namespace datadog
+
+	case "${1}" in
+	sandbox)
+		log::indicator "Checking sandbox policies"
+		log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}" \
+			--policy-namespace sandbox
+		;;
+	staging)
+		log::indicator "Checking staging policies"
+		log::exec_command "${helm_args[@]}" -p "${POLICY_PATH}" \
+			--policy-namespace staging
+		;;
+	esac
 }
 
 main "$@"
