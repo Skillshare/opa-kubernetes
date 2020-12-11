@@ -46,6 +46,7 @@ steps:
     repo: skillshare/blueprint
     revision: ${{CF_BRANCH}}
     git: github
+    fail_fast: false
 
   build:
     stage: prepare
@@ -70,10 +71,11 @@ steps:
     title: Test blueprint branch
     image: ${{build}}
     working_directory: ${{clone_blueprint_branch}}
-    commands:
-      - check-release sandbox
-      - check-release staging
-      - check-release prod
+    matrix:
+      commands:
+        - [check-release sandbox]
+        - [check-release staging]
+        - [check-release prod]
     when:
       steps:
         - name: clone_blueprint_branch
@@ -85,10 +87,11 @@ steps:
     title: Test blueprint master
     image: ${{build}}
     working_directory: ${{clone_blueprint_master}}
-    commands:
-      - check-release sandbox
-      - check-release staging
-      - check-release prod
+    matrix:
+      commands:
+        - [check-release sandbox]
+        - [check-release staging]
+        - [check-release prod]
     when:
       steps:
         - name: clone_blueprint_master

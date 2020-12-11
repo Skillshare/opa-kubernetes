@@ -22,39 +22,16 @@ steps:
       - test -f chart/Chart.yaml
       - test -f deploy/test/values.yaml
 
-  test_sandbox_release:
+  test_releases:
     stage: test
-    title: Check sandbox release
+    title: Check releases
     working_directory: ${{clone}}
     image: 289698421666.dkr.ecr.us-east-1.amazonaws.com/conftest/kubernetes:latest
-    commands:
-      - check-release sandbox
-    when:
-      steps:
-        - name: detect_chart
-          on:
-            - success
-
-  test_staging_release:
-    stage: test
-    title: Check staging release
-    working_directory: ${{clone}}
-    image: 289698421666.dkr.ecr.us-east-1.amazonaws.com/conftest/kubernetes:latest
-    commands:
-      - check-release staging
-    when:
-      steps:
-        - name: detect_chart
-          on:
-            - success
-
-  test_prod_release:
-    stage: test
-    title: Check prod release
-    working_directory: ${{clone}}
-    image: 289698421666.dkr.ecr.us-east-1.amazonaws.com/conftest/kubernetes:latest
-    commands:
-      - check-release prod
+    matrix:
+      commands:
+        - [check-release sandbox]
+        - [check-release staging]
+        - [check-release prod]
     when:
       steps:
         - name: detect_chart
