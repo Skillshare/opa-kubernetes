@@ -31,23 +31,6 @@ steps:
     commands:
       - git submodule update --init --recursive
 
-  clone_blueprint_master:
-    stage: prepare
-    title: Clone blueprint
-    type: git-clone
-    repo: skillshare/blueprint
-    revision: master
-    git: github
-
-  clone_blueprint_branch:
-    stage: prepare
-    title: Clone blueprint
-    type: git-clone
-    repo: skillshare/blueprint
-    revision: ${{CF_BRANCH}}
-    git: github
-    fail_fast: false
-
   build:
     stage: prepare
     title: Build
@@ -65,38 +48,6 @@ steps:
     working_directory: ${{clone}}
     commands:
       - task test:ci
-
-  test_blueprint_branch:
-    stage: test
-    title: Test blueprint branch
-    image: ${{build}}
-    working_directory: ${{clone_blueprint_branch}}
-    matrix:
-      commands:
-        - [check-release sandbox]
-        - [check-release staging]
-        - [check-release prod]
-    when:
-      steps:
-        - name: clone_blueprint_branch
-          on:
-            - success
-
-  test_blueprint_master:
-    stage: test
-    title: Test blueprint master
-    image: ${{build}}
-    working_directory: ${{clone_blueprint_master}}
-    matrix:
-      commands:
-        - [check-release sandbox]
-        - [check-release staging]
-        - [check-release prod]
-    when:
-      steps:
-        - name: clone_blueprint_master
-          on:
-            - success
 
   push:
     stage: release

@@ -1,5 +1,6 @@
 FROM alpine/helm:3.4.0
 
+ENV YQ_VERSION=3.4.1
 ENV TASK_VERSION=3.0.0
 ENV CONFTEST_VERSION=0.22.0
 ENV HELM_SECRETS_VERSION=3.3.5
@@ -9,7 +10,10 @@ ENV HELM_CONFTEST_VERSION=0.1.3
 ENV POLICY_PATH=/usr/src/opa-kubernetes
 ENV DATA_PATH=/usr/share/opa-kubernetes
 
-RUN apk add -X http://dl-cdn.alpinelinux.org/alpine/edge/community curl bats yq rsync git
+RUN apk add curl bats rsync git
+
+RUN curl --fail -sSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
+	&& chmod +x /usr/local/bin/yq
 
 RUN curl --fail -sSL -o task.tar.gz https://github.com/go-task/task/releases/download/v${TASK_VERSION}/task_linux_386.tar.gz \
 	&& mkdir -p task-install \

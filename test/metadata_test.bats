@@ -108,3 +108,51 @@ setup() {
 
 	assert_denied 'MTA-03'
 }
+
+@test "MTA-04 - empty annotations" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/deployment.yml" 'metadata.annotations' null
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'MTA-04'
+}
+
+@test "MTA-04 - empty labels" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/deployment.yml" 'metadata.labels' null
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'MTA-04'
+}
+
+@test "MTA-04 - spec template empty annotations" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations' null
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'MTA-04'
+}
+
+@test "MTA-04 - spec template empty labels" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.labels' null
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'MTA-04'
+}

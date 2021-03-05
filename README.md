@@ -32,6 +32,7 @@ Goals:
 - [MTA-01](RULES.md#MTA-01): no `namespace` set
 - [MTA-02](RULES.md#MTA-02): mandatory labels
 - [MTA-03](RULES.md#MTA-03): `name` well formed
+- [MTA-04](RULES.md#MTA-04): Non-empty `annotations` and `labels`
 
 ### Workloads
 

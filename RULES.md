@@ -22,6 +22,11 @@ labels][labels].
 Entity template specifies labels defines [Kubernetes recommended
 labels][labels].
 
+## MTA-04
+
+Entities does not include empty `labels` or `annotations`. If there
+are none, then omit the key.
+
 ## WRK-01
 
 Resource `requests` and `limits` such that:

@@ -2,3 +2,4 @@
 *.bats
 yarn.lock
 vendor
+.tool-versions

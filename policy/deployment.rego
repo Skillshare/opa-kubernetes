@@ -20,12 +20,26 @@ deny[msg] {
 
 deny[msg] {
 	kubernetes.is_deployment
+	is_null(input.spec.selector.matchLabels)
+	msg = sprintf("[DPL-02] Deployment %s must specify label selector", [name])
+}
+
+deny[msg] {
+	kubernetes.is_deployment
+	is_object(input.spec.selector.matchLabels)
 	count(input.spec.selector.matchLabels) == 0
 	msg = sprintf("[DPL-02] Deployment %s must specify label selector", [name])
 }
 
 deny[msg] {
 	kubernetes.is_deployment
+	is_null(input.spec.template.metadata.labels)
+	msg = sprintf("[DPL-02] Deployment %s must specify metadata labels", [name])
+}
+
+deny[msg] {
+	kubernetes.is_deployment
+	is_object(input.spec.template.metadata.labels)
 	count(input.spec.template.metadata.labels) == 0
 	msg = sprintf("[DPL-02] Deployment %s must specify metadata labels", [name])
 }
