@@ -1,0 +1,84 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-background
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: test-1
+    app.kubernetes.io/version: 0.1.0
+    app.kubernetes.io/component: tests
+    app.kubernetes.io/part-of: dummy
+    app.kubernetes.io/managed-by: hand
+    tags.datadoghq.com/env: prod
+    tags.datadoghq.com/service: test
+    tags.datadoghq.com/version: 0.1.0
+spec:
+  selector:
+    matchLabels:
+      app: test-background
+  template:
+    metadata:
+      labels:
+        app: test-background
+        app.kubernetes.io/name: test
+        app.kubernetes.io/instance: test-1
+        app.kubernetes.io/version: 0.1.0
+        app.kubernetes.io/component: tests
+        app.kubernetes.io/part-of: dummy
+        app.kubernetes.io/managed-by: hand
+        tags.datadoghq.com/env: prod
+        tags.datadoghq.com/service: test
+        tags.datadoghq.com/version: 0.1.0
+    spec:
+      volumes:
+        - name: secrets
+          secret:
+            secretName: test
+        - name: config
+          configMap:
+            name: test
+      containers:
+        - name: dummy
+          image: dummy
+          env:
+            - name: DD_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/env']
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/version']
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          envFrom:
+            - configMapRef:
+                name: test
+            - secretRef:
+                name: test
+          resources:
+            requests:
+              cpu: 1
+              memory: 512Mi
+            limits:
+              cpu: 2
+              memory: 1024Mi
+          livenessProbe:
+            exec:
+              command:
+                - echo
+                - OK
+          volumeMounts:
+            - name: secrets
+              readOnly: true
+              mountPath: /data/secrets
+            - name: config
+              readOnly: true
+              mountPath: /data/config

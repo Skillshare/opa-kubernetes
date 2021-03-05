@@ -21,18 +21,6 @@ setup() {
 	assert_denied 'DPL-01'
 }
 
-@test "DPL-01 - containers set readiness probes" {
-	fixture="$(mktemp -d)"
-	rsync -r test/fixtures/pass/ "${fixture}"
-
-	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe'
-
-	run conftest test "${fixture}/"*
-	assert_failure
-
-	assert_denied 'DPL-01'
-}
-
 @test "DPL-02 - selector matches template labels" {
 	fixture="$(mktemp -d)"
 	rsync -r test/fixtures/pass/ "${fixture}"

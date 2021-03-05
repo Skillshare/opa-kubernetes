@@ -226,3 +226,17 @@ setup() {
 
 	assert_denied 'CMB-06'
 }
+
+@test "CMB-07 - Deployment readinessProbe" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe'
+
+	run conftest test \
+		--combine --namespace combined \
+		"${fixture}/"*
+	assert_failure
+
+	assert_denied 'CMB-07'
+}

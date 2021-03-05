@@ -66,8 +66,10 @@ Applies to: `Deployment`, `Job`, `CronJob`
 - [CMB-02](RULES.md#CMB-02): volume from matches `ConfigMap` or `Secret`
 - [CMB-03](RULES.md#CMB-03): `Service` selector matches a `Deployment`
 - [CMB-04](RULES.md#CMB-04): `HorizontalPodAutoscaler` scaling target matches a `Deployment`
-- [CMB-05](RULES.md#CMB-05): Service port matches container port
+- [CMB-05](RULES.md#CMB-05): `Service` port matches container port
 - [CMB-06](RULES.md#CMB-06): HPA managed deployment does not set replicas
+- [CMB-07](RULES.md#CMB-07): `Deployment` connected to `Service` sets
+  a readiness probe
 
 ### DataDog
 

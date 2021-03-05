@@ -13,13 +13,6 @@ deny[msg] {
 
 deny[msg] {
 	kubernetes.is_deployment
-	container := input.spec.template.spec.containers[_]
-	not container.readinessProbe
-	msg = sprintf("[DPL-01] Deployment %s container %s must specify readinessProbe", [name, container.name])
-}
-
-deny[msg] {
-	kubernetes.is_deployment
 	is_null(input.spec.selector.matchLabels)
 	msg = sprintf("[DPL-02] Deployment %s must specify label selector", [name])
 }

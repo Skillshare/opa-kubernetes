@@ -22,6 +22,15 @@ deny[msg] {
 	msg = sprintf("[CMB-03] Service %s selector must match a Deployment", [service.metadata.name])
 }
 
+deny[msg] {
+	service := services_by_name[_]
+	deployment := deployments_by_name[_]
+	matching_service_selector(service, [deployment])
+	readinessProbes := {probe | probe := deployment.spec.template.spec.containers[_].readinessProbe}
+	count(readinessProbes) == 0
+	msg = sprintf("[CMB-07] Deployment %s must specify a readinessProbe", [deployment.metadata.name])
+}
+
 matching_service_port(service, deployments) {
 	target_ports := {port | port := service.spec.ports[_].targetPort}
 	numbered_container_ports := {port | port := deployments[_].spec.template.spec.containers[_].ports[_].containerPort}
