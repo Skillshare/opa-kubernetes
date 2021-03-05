@@ -59,3 +59,21 @@ deny[msg] {
 	count(probe_ports - container_ports) != 0
 	msg = sprintf("[DPL-03] Deployment %s container %s probes port must match container port", [name, container.name])
 }
+
+warn[msg] {
+	kubernetes.is_deployment
+	container := input.spec.template.spec.containers[_]
+	container.livenessProbe.httpGet
+	container.readinessProbe.httpGet
+	container.livenessProbe.httpGet.path == container.readinessProbe.httpGet.path
+	msg = sprintf("[DPL-04] Deployment %s container %s is reusing livenessProbe for readinessProbe", [name, container.name])
+}
+
+warn[msg] {
+	kubernetes.is_deployment
+	container := input.spec.template.spec.containers[_]
+	container.livenessProbe.exec
+	container.readinessProbe.exec
+	container.livenessProbe.exec.command == container.readinessProbe.exec.command
+	msg = sprintf("[DPL-04] Deployment %s container %s is reusing livenessProbe for readinessProbe", [name, container.name])
+}

@@ -86,6 +86,13 @@ be rejected by the Kubernetes API for a mismatched selector.
 Container `livenessProbe` and `readinessProbe` that specifies a port
 matches a declared `containerPort`.
 
+## DPL-04
+
+Container `livenessProbe` and `readinessProbe` are the same. This
+**should not** be the case. Liveness and readiness are two different
+conditions so the same probe (either an HTTP GET or exec command)
+should not be used for both.
+
 ## JOB-01
 
 Requires `Jobs` set an explicit `backoffLimit`. The default likely

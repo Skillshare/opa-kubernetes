@@ -51,6 +51,7 @@ Applies to: `Deployment`, `Job`, `CronJob`
 - [DPL-01](RULES.md#DPL-01): containers set liveness and readiness probes
 - [DPL-02](RULES.md#DPL-02): selector matches template labels
 - [DPL-03](RULES.md#DPL-03): liveness and readiness probes match container port
+- [DPL-04](RULES.md#DPL-04): reusing liveness and readiness probe
 
 ### Job
 

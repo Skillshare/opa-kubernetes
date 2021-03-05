@@ -182,3 +182,31 @@ setup() {
 
 	assert_denied 'DPL-03'
 }
+
+@test "DPL-04 - same HTTP liveness and readiness probe" {
+	fixture="$(mktemp -d)"
+
+	rsync -r test/fixtures/pass/ "${fixture}"
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe.httpGet.path' '/probe'
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe.httpGet.path' '/probe'
+
+	run conftest test "${fixture}/"*
+	assert_success
+
+	assert_warn 'DPL-04'
+}
+
+@test "DPL-04 - same exec command  liveness and readiness probe" {
+	fixture="$(mktemp -d)"
+
+	rsync -r test/fixtures/pass/ "${fixture}"
+	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe.httpGet'
+	yq d -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe.httpGet'
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].livenessProbe.exec.command' 'echo'
+	yq w -i "${fixture}/deployment.yml" 'spec.template.spec.containers[0].readinessProbe.exec.command' 'echo'
+
+	run conftest test "${fixture}/"*
+	assert_success
+
+	assert_warn 'DPL-04'
+}
