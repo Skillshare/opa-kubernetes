@@ -18,6 +18,10 @@ is_secret {
 	input.kind = "Secret"
 }
 
+is_config_map {
+	input.kind = "ConfigMap"
+}
+
 is_job {
 	input.kind = "Job"
 }

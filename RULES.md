@@ -27,6 +27,10 @@ labels][labels].
 Entities does not include empty `labels` or `annotations`. If there
 are none, then omit the key.
 
+## MTA-05
+
+Entities labels and annotations are strings.
+
 ## WRK-01
 
 Resource `requests` and `limits` such that:
@@ -42,6 +46,30 @@ Container `volumeMount` names match a declared `volume`
 ## WRK-03
 
 A declared `volumes` is mounted in at least one container.
+
+## WRK-04
+
+Container names do not contain invalid characters.
+
+## WRK-05
+
+Declared `env` name/value pairs specify string values.
+
+Example:
+
+```
+env:
+  - name: ENABLE_FEATURE
+    value: true
+```
+
+Resolve by quoting all values.
+
+```
+env:
+  - name: ENABLE_FEATURE
+    value: 'true'
+```
 
 ## DPL-01
 
@@ -63,6 +91,24 @@ matches a declared `containerPort`.
 Requires `Jobs` set an explicit `backoffLimit`. The default likely
 does not work in all cases. This forces manifest authors to choose an
 applicable `backoffLimit`.
+
+## CFG-01
+
+`ConfigMap` value keys are explicit strings.
+
+Broken example:
+
+```
+data:
+  ENABLE_FEATURE: true
+```
+
+Resolve by quoting all values.
+
+```
+data:
+  ENABLE_FEATURE: 'true'
+```
 
 ## SEC-01
 
@@ -111,8 +157,8 @@ Validate workloads set specific tags by by providing a data file to
 ```
 # data/datadog_required_tags.yaml
 datadog_required_tags:
-	- environment
-	- service
+  - environment
+  - service
 ```
 
 Next pass the `-d` or `--data` argument to conftest:
@@ -129,7 +175,7 @@ Example valid annotation:
 
 ```
 ad.datadoghq.com/dummy.logs: |
-	[{ "source": "docker", "service": "dummy" }]
+  [{ "source": "docker", "service": "dummy" }]
 ```
 
 Where `dummy` is a declared container.

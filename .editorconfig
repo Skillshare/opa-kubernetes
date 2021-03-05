@@ -10,7 +10,7 @@ insert_final_newline = true
 charset = utf-8
 indent_style = tab
 
-# Two spaces for whitespace sensitive YAML
-[*.{yaml,yml}]
+# Two spaces for whitespace sensitive
+[*.{yaml,yml,md}]
 indent_style = space
 indent_size = 2

@@ -218,3 +218,45 @@ setup() {
 	assert_failure
 	assert_denied 'WRK-04'
 }
+
+@test "WRK-05 - Deployment containers env var value type" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i -s \
+		test/script/insert_invalid_env_var.yml \
+		"${fixture}/deployment.yml"
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'WRK-05'
+}
+
+@test "WRK-05 - Job containers env var value type" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i -s \
+		test/script/insert_invalid_env_var.yml \
+		"${fixture}/job.yml"
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'WRK-05'
+}
+
+@test "WRK-05 - CronJob containers env var value type" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i -s \
+		test/script/insert_invalid_cron_job_env_var.yml \
+		"${fixture}/cron_job.yml"
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'WRK-05'
+}

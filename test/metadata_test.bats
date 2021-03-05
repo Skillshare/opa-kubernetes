@@ -156,3 +156,51 @@ setup() {
 
 	assert_denied 'MTA-04'
 }
+
+@test "MTA-05 - label string type" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/deployment.yml" 'metadata.labels.foo' 'true'
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'MTA-05'
+}
+
+@test "MTA-05 - annotations string type" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/deployment.yml" 'metadata.annotations.foo' 'true'
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'MTA-05'
+}
+
+@test "MTA-05 - workload label string type" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.labels.foo' 'true'
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'MTA-05'
+}
+
+@test "MTA-05 - workload annotations string type" {
+	fixture="$(mktemp -d)"
+	rsync -r test/fixtures/pass/ "${fixture}"
+
+	yq w -i "${fixture}/deployment.yml" 'spec.template.metadata.annotations.foo' 'true'
+
+	run conftest test "${fixture}/"*
+	assert_failure
+
+	assert_denied 'MTA-05'
+}

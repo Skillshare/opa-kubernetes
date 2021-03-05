@@ -76,3 +76,35 @@ deny[msg] {
 	is_null(value)
 	msg = sprintf("[MTA-04] %s must not contain empty labels.", [name])
 }
+
+deny[msg] {
+	some key
+	value := input.metadata.labels[key]
+	not is_string(value)
+	msg = sprintf("[MTA-05] %s %s label %s must be a string", [name, input.kind, key])
+}
+
+deny[msg] {
+	some key
+	value := input.metadata.annotations[key]
+	not is_string(value)
+	msg = sprintf("[MTA-05] %s %s annotation %s must be a string", [name, input.kind, key])
+}
+
+deny[msg] {
+	kubernetes.is_workload
+	template := kubernetes.workload_template(input)
+	some key
+	value := template.metadata.labels[key]
+	not is_string(value)
+	msg = sprintf("[MTA-05] %s %s template label %s must be a string", [name, input.kind, key])
+}
+
+deny[msg] {
+	kubernetes.is_workload
+	template := kubernetes.workload_template(input)
+	some key
+	value := template.metadata.annotations[key]
+	not is_string(value)
+	msg = sprintf("[MTA-05] %s %s template annotation %s must be a string", [name, input.kind, key])
+}

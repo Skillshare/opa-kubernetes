@@ -33,6 +33,7 @@ Goals:
 - [MTA-02](RULES.md#MTA-02): mandatory labels
 - [MTA-03](RULES.md#MTA-03): `name` well formed
 - [MTA-04](RULES.md#MTA-04): Non-empty `annotations` and `labels`
+- [MTA-05](RULES.md#MTA-05): String vlaues for `annotations` and `labels`
 
 ### Workloads
 
@@ -41,6 +42,9 @@ Applies to: `Deployment`, `Job`, `CronJob`
 - [WRK-01](RULES.md#WRK-01): containers set resource requests and limits
 - [WRK-02](RULES.md#WRK-02): `volumeMount` matches `volume`
 - [WRK-03](RULES.md#WRK-03): `volumes` are mounted
+- [WRK-04](RULES.md#WRK-04): container names do not contain invalid
+  characters
+- [WRK-05](RULES.md#WRK-05): `env` values are explicit strings
 
 ### Deployments
 
@@ -51,6 +55,10 @@ Applies to: `Deployment`, `Job`, `CronJob`
 ### Job
 
 - [JOB-01](RULES.md#JOB-01): explicit `backoffLimit` set
+
+### ConfigMap
+
+- [CFG-01](RULES.md#CFG-01): values are String type
 
 ### Secrets
 

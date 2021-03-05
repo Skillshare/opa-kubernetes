@@ -63,3 +63,13 @@ deny[msg] {
 	regex.match(`[A-Z()${}\[\]]`, container.image)
 	msg = sprintf("[WRK-04] %s %s container %s image contains invalid characters", [input.kind, name, container.name])
 }
+
+deny[msg] {
+	kubernetes.is_workload
+	template := kubernetes.workload_template(input)
+	container := template.spec.containers[_]
+	env := container.env[_]
+	env.value
+	not is_string(env.value)
+	msg = sprintf("[WRK-05] %s %s container %s env var %s must be a string", [input.kind, name, container.name, env.name])
+}

@@ -1,0 +1,5 @@
+- command: update
+  path: "spec.jobTemplate.spec.template.spec.containers[0].env[+]"
+  value:
+    name: FOO
+    value: true
